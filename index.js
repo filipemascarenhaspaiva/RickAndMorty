@@ -16,7 +16,7 @@ const readById = require("./components/read-by-id/read-by-id");
 	const app = express();
 	app.use(express.json());
 
-	const port = process.env.Port || 3000;
+	const port = process.env.port || 3000;
 	const connectionString = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.${dbChar}.mongodb.net/${dbName}?retryWrites=true&w=majority`;
 
 	const options = {
