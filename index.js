@@ -29,8 +29,8 @@ const readById = require("./components/realById/readById");
 
 	console.info("Conexão estabelecida com o MongoDB Atlas!");
 
-	const db = client.db("db_rickmorty");
-	const personagens = db.collection("RickMorty");
+	const db = client.db("db_blue_rick");
+	const personagens = db.collection("personagens");
 
 	const getPersonagensValidas = () => personagens.find({}).toArray();
 
@@ -80,7 +80,7 @@ app.options("*", cors());
 	}); */
 
 	//Nova chamada de rota - arquivo separado
-	app.use("/personagens/read-by-id*/", readById);
+	app.use("/personagens/read-by-id/", readById);
 
 	//[POST] Adicona personagem
 	app.post("/personagens", async (req, res) => {
