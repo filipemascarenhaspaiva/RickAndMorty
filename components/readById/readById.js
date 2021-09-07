@@ -13,7 +13,7 @@ const ObjectId = mongodb.ObjectId;
   };
   const client = await mongodb.MongoClient.connect(connectionString, options);
 
-  const db = client.db("blue_db");
+  const db = client.db("db_blue_rick");
   const personagens = db.collection("personagens");
 
   const getPersonagemById = async (id) =>

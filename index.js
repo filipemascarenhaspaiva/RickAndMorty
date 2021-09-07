@@ -6,7 +6,11 @@ require("express-async-errors");
 var cors = require("cors");
 //requires de endpoints
 const home = require("./components/home/home");
-const readById = require("./components/realById/readById");
+const readById = require("./components/readById/readById");
+const readAll = require("./components/readAll/readAll");
+const create = require("./components/create/create");
+const update = require("./components/update/update");
+const delet = require("./components/delete/delet");
 (async () => {
 	const dbUser = process.env.DB_USER;
 	const dbPassword = process.env.DB_PASSWORD;
@@ -61,9 +65,7 @@ app.options("*", cors());
 
 	//[GET] GetAllPersonagens
 
-	app.get("/personagens", async (req, res) => {
-		res.send(await getPersonagensValidas());
-	});
+	app.use("/readAll", readAll);
 
 	//[GET] getPersonagemById
 
@@ -80,101 +82,16 @@ app.options("*", cors());
 	}); */
 
 	//Nova chamada de rota - arquivo separado
-	app.use("/personagens/read-by-id/", readById);
+	app.use("/readById", readById);
 
 	//[POST] Adicona personagem
-	app.post("/personagens", async (req, res) => {
-		const objeto = req.body;
-
-		if (!objeto || !objeto.nome || !objeto.imagemUrl) {
-			res.status(400).send({
-				error:
-					"Personagem inválido, certifique-se que tenha os campos nome e imagemUrl",
-			});
-			return;
-		}
-
-		const result = await personagens.insertOne(objeto);
-
-		console.log(result);
-		//Se ocorrer algum erro com o mongoDb esse if vai detectar
-		if (result.acknowledged == false) {
-			res.status(500).send({ error: "Ocorreu um erro" });
-			return;
-		}
-
-		res.status(201).send(objeto);
-	});
+	app.use("/create", create);
 
 	//[PUT] Atualizar personagem
-	app.put("/personagens/:id", async (req, res) => {
-		const id = req.params.id;
-		const objeto = req.body;
-
-		if (!objeto || !objeto.nome || !objeto.imagemUrl) {
-			res.status(400);
-			send({
-				error:
-					"Requisição inválida, certifique-se que tenha os campos nome e imagemUrl",
-			});
-			return;
-		}
-
-		const quantidadePersonagens = await personagens.countDocuments({
-			_id: ObjectId(id),
-		});
-
-		if (quantidadePersonagens !== 1) {
-			res.status(404).send({ error: "Personagem não encontrado" });
-			return;
-		}
-
-		const result = await personagens.updateOne(
-			{
-				_id: ObjectId(id),
-			},
-			{
-				$set: objeto,
-			}
-		);
-		//console.log(result);
-		//Se acontecer algum erro no MongoDb, cai na seguinte valiadação
-		if (result.acknowledged == "undefined") {
-			res
-				.status(500)
-				.send({ error: "Ocorreu um erro ao atualizar o personagem" });
-			return;
-		}
-		res.send(await getPersonagemById(id));
-	});
+	app.use("/update", update);
 
 	//[DELETE] Deleta um personagem
-	app.delete("/personagens/:id", async (req, res) => {
-		const id = req.params.id;
-		//Retorna a quantidade de personagens com o filtro(Id) especificado
-		const quantidadePersonagens = await personagens.countDocuments({
-			_id: ObjectId(id),
-		});
-		//Checar se existe o personagem solicitado
-		if (quantidadePersonagens !== 1) {
-			res.status(404).send({ error: "Personagem não encontrao" });
-			return;
-		}
-		//Deletar personagem
-		const result = await personagens.deleteOne({
-			_id: ObjectId(id),
-		});
-		//Se não consegue deletar, erro do Mongo
-		if (result.deletedCount !== 1) {
-			res
-				.status(500)
-				.send({ error: "Ocorreu um erro ao remover o personagem" });
-			return;
-		}
-
-		res.send(204);
-	});
-
+	app.use("/delete", delet);
 	//Tratamento de erros
 	//Middleware verificar endpoints
 	app.all("*", function (req, res) {
