@@ -6,7 +6,7 @@ require("express-async-errors");
 var cors = require("cors");
 //requires de endpoints
 const home = require("./components/home/home");
-const readById = require("./components/read-by-id/read-by-id");
+const readById = require("./components/realById/readById");
 (async () => {
 	const dbUser = process.env.DB_USER;
 	const dbPassword = process.env.DB_PASSWORD;
